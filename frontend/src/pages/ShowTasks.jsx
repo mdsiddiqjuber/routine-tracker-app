@@ -1,14 +1,21 @@
 import axiosInstance from "../apis/taskApi.js";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export function ShowTasks() {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    axiosInstance.get("/tasks")
-      .then(response => setTasks(response.data.tasks))
-      .catch(error => console.error("Error fetching tasks:", error));
-  }, []);
+    const fetchTasks = async () => {
+      try {
+        const response = await axiosInstance.get("/tasks");
+        setTasks(response.data.tasks);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
+    fetchTasks();
+  }, [tasks]);
 
   return (
     <div>
@@ -18,6 +25,9 @@ export function ShowTasks() {
           <li key={task._id}>{task.title}</li>
         ))}
       </ul>
+      <button>
+        <Link to="/add">Add Task</Link>
+      </button>
     </div>
   );
 }
