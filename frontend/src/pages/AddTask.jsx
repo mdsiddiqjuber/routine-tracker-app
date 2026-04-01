@@ -1,26 +1,23 @@
 import { useState } from "react";
-import axiosInstance from "../apis/taskApi";
-import { useNavigate } from "react-router-dom";
+import axiosInstance from "../apis/taskApi.js";
+import "./AddTask.css";
 
-export function AddTask() {
+export function AddTask({ onTaskAdded }) {
   const [title, setTitle] = useState("");
-  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     try {
       const response = await axiosInstance.post("/tasks/add", { title });
       console.log("Task added:", response.data);
+      onTaskAdded(response.data.task);
       setTitle("");
-      navigate("/");
     } catch (error) {
       console.error("Error in adding task:", error.response);
     }
   };
   return (
-    <div>
-      <h2>Add Task</h2>
-      <form onSubmit={handleSubmit}>
+      <form className="add-task-form" onSubmit={handleSubmit}>
         <input 
         type="text" 
         placeholder="Task title" 
@@ -28,6 +25,5 @@ export function AddTask() {
         onChange={(e) => setTitle(e.target.value)} />
         <button type="submit">Add Task</button>
       </form>
-    </div>
   );
 }
