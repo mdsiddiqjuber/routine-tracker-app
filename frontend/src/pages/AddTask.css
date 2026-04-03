@@ -16,12 +16,12 @@
 .add-task-form button {
   padding: 10px 16px;
   border: none;
-  background: #10b981;
+  background: #007bff;
   color: white;
   border-radius: 8px;
   cursor: pointer;
 }
 
 .add-task-form button:hover {
-  background: #059669;
+  background: #0056b3;
 }

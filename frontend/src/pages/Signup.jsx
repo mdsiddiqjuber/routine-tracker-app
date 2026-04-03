@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-//import { useNavigate } from "react-router-dom";
-import axiosInstance from "../apis/taskApi.js";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../apis/axiosInstance.js";
 import { handleError, handleSuccess } from "../utils/toast.js";
 import "./Signup.css";
 
 export function Signup() {
+  const navigate = useNavigate();
   //const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -32,9 +33,9 @@ export function Signup() {
       const { success, message } = response.data;
       if (success) {
         handleSuccess(message);
-        // setTimeout(() => {
-        //   navigate("/login");
-        // }, 3000);
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
       }
     } catch (err) {
       if (err.response.data?.error?.details) {

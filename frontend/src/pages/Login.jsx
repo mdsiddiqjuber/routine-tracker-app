@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { handleSuccess, handleError } from "../utils/toast.js";
 import "./Login.css";
-import axiosInstance from "../apis/taskApi.js";
+import axiosInstance from "../apis/axiosInstance.js";
 
 export function Login() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -22,16 +22,18 @@ export function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post("/auth/login", formData);
+      const response = await axiosInstance.post("/auth/login", formData,{
+        skipAuthInterceptor: true
+      });
       const { success, message, jwtToken, email, name } = response.data;
       if (success) {
         handleSuccess(message);
         localStorage.setItem("jwtToken", jwtToken);
         localStorage.setItem("email", email);
         localStorage.setItem("name", name);
-        // setTimeout(() => {
-        //   navigate("/home");
-        // }, 3000);
+        setTimeout(() => {
+          navigate("/home");
+        }, 1500);
       } else if (!success) {
         handleError(message);
       }
