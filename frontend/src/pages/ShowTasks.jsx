@@ -50,7 +50,7 @@ export function ShowTasks() {
     }
   }
   return (
-    <div className="container">
+    <div className="container-showtasks">
       <h2>Tasks</h2>
       <TaskBody
         handleChange={handleChange}

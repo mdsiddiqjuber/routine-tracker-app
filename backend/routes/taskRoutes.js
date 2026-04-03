@@ -1,5 +1,8 @@
 const router = require("express").Router();
 const { getAllTasks, createTask, taskComplete, editTask, deleteTask } = require("../controllers/taskController.js");
+const authMiddleware = require("../middlewares/authMiddleware.js");
+
+router.use(authMiddleware);
 
 router.get("/", getAllTasks);
 
