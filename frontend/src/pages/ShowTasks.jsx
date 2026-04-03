@@ -1,10 +1,13 @@
-import axiosInstance from "../apis/taskApi.js";
+import axiosInstance from "../apis/axiosInstance.js";
 import { useState, useEffect } from "react";
 import { TaskBody } from "./TaskBody.jsx";
 import { AddTask } from "./AddTask.jsx";
 import "./ShowTasks.css";
+import { handleSuccess } from "../utils/toast.js";
+import { useNavigate } from "react-router-dom";
 
 export function ShowTasks() {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
   const [showInput, setShowInput] = useState(false);
 
@@ -49,26 +52,47 @@ export function ShowTasks() {
       console.error("Error in deleting task:", error.response.data);
     }
   }
+
+  const handleLogout = () => {
+    handleSuccess("Logged out successfully!");
+    localStorage.removeItem("jwtToken");
+    localStorage.removeItem("email");
+    localStorage.removeItem("name");
+    setTimeout(() => {
+      navigate("/login");
+    }, 1500);
+  };
+
   return (
-    <div className="container">
-      <h2>Tasks</h2>
-      <TaskBody
-        handleChange={handleChange}
-        handleDelete={handleDelete}
-        tasks={tasks} />
-      {showInput && (
-        <AddTask
-          onTaskAdded={(newTask) => {
-            setTasks((prev) => [...prev, newTask]);
-            setShowInput(false);
-          }}
+    <>
+      <div className="container-showtasks">
+        <h2>Tasks</h2>
+        <TaskBody
+          handleChange={handleChange}
+          handleDelete={handleDelete}
+          tasks={tasks}
+          setTasks={setTasks}
         />
-      )}
-      <button
-        className="add-btn"
-        onClick={() => setShowInput((prev) => !prev)}>
-        {showInput ? "Cancel" : "Add Task"}
-      </button>
-    </div>
+        {showInput && (
+          <AddTask
+            onTaskAdded={(newTask) => {
+              setTasks((prev) => [...prev, newTask]);
+              setShowInput(false);
+            }}
+          />
+        )}
+        <button
+          className="add-btn"
+          onClick={() => setShowInput((prev) => !prev)}>
+          {showInput ? "Cancel" : "Add Task"}
+        </button>
+      </div>
+      <div className="logout">
+        <button className="btn-logout" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
+    </>
+
   );
 }

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import axiosInstance from "../apis/taskApi.js";
+import axiosInstance from "../apis/axiosInstance.js";
 import "./TaskBody.css";
 
-export function TaskBody({ handleChange, handleDelete, tasks }) {
+export function TaskBody({ handleChange, handleDelete, tasks, setTasks }) {
   const [editId, setEditId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
 
@@ -41,9 +41,15 @@ export function TaskBody({ handleChange, handleDelete, tasks }) {
                 className="btn save-btn"
                 onClick={async () => {
                   try {
-                    await axiosInstance.put(`/tasks/edit/${editId}`, {
+                    const response = await axiosInstance.put(`/tasks/edit/${editId}`, {
                       title: editTitle,
                     });
+                    console.log("Task updated:", response.data);
+                    setTasks((prev) =>
+                      prev.map((t) =>
+                        t._id === editId ? { ...t, title: editTitle } : t
+                      )
+                    );
                     setEditId(null);
                   } catch (error) {
                     console.error("Error updating task:", error);
