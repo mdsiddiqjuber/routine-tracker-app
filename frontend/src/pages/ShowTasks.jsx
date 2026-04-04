@@ -14,7 +14,7 @@ export function ShowTasks() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axiosInstance.get("/tasks");
+        const response = await axiosInstance.get("/task");
         setTasks(response.data.tasks);
       } catch (error) {
         console.error("Error fetching tasks:", error);
@@ -25,7 +25,7 @@ export function ShowTasks() {
 
   const handleChange = async (id) => {
     try {
-      await axiosInstance.put(`/tasks/complete/${id}`)
+      await axiosInstance.put(`/task/complete/${id}`)
         .then((response) => {
           console.log(response.data.message);
         });
@@ -43,7 +43,7 @@ export function ShowTasks() {
 
   const handleDelete = async (id) => {
     try {
-      await axiosInstance.delete(`/tasks/delete/${id}`)
+      await axiosInstance.delete(`/task/delete/${id}`)
         .then((response) => {
           console.log(response.data.message);
         });
@@ -55,7 +55,7 @@ export function ShowTasks() {
 
   const handleLogout = () => {
     handleSuccess("Logged out successfully!");
-    localStorage.removeItem("jwtToken");
+    localStorage.removeItem("accessToken");
     localStorage.removeItem("email");
     localStorage.removeItem("name");
     setTimeout(() => {

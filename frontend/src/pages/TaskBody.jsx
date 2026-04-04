@@ -41,7 +41,7 @@ export function TaskBody({ handleChange, handleDelete, tasks, setTasks }) {
                 className="btn save-btn"
                 onClick={async () => {
                   try {
-                    const response = await axiosInstance.put(`/tasks/edit/${editId}`, {
+                    const response = await axiosInstance.put(`/task/edit/${editId}`, {
                       title: editTitle,
                     });
                     console.log("Task updated:", response.data);

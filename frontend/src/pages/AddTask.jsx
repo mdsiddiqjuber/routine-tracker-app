@@ -8,7 +8,7 @@ export function AddTask({ onTaskAdded }) {
     e.preventDefault();
     
     try {
-      const response = await axiosInstance.post("/tasks/add", { title });
+      const response = await axiosInstance.post("/task/add", { title });
       console.log("Task added:", response.data);
       onTaskAdded(response.data.task);
       setTitle("");

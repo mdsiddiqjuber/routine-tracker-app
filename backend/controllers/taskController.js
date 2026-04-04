@@ -14,7 +14,6 @@ const getAllTasks = async (req, res) => {
 
 const createTask = async (req, res) => {
   const { title } = req.body;
-  console.log("User ID from token:", req.userId); // Debugging line
   try {
     const newTask = new Task({ title, userId: req.userId });
     await newTask.save();

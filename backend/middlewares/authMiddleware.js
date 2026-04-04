@@ -9,9 +9,8 @@ const authMiddleware = (req, res, next) => {
     }
 
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded token:", decoded); // Debugging line
-    req.userId = decoded._id; // attach userId
+    const decoded = jwt.verify(token, process.env.ACCESS_SECRET);
+    req.userId = decoded.userId; // attach userId
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
