@@ -25,10 +25,8 @@ export function ShowTasks() {
 
   const handleChange = async (id) => {
     try {
-      await axiosInstance.put(`/task/complete/${id}`)
-        .then((response) => {
-          console.log(response.data.message);
-        });
+      const response = await axiosInstance.put(`/task/complete/${id}`)
+      console.log(response.data.message);
       setTasks((prev) =>
         prev.map((task) =>
           task._id === id
@@ -43,21 +41,22 @@ export function ShowTasks() {
 
   const handleDelete = async (id) => {
     try {
-      await axiosInstance.delete(`/task/delete/${id}`)
-        .then((response) => {
-          console.log(response.data.message);
-        });
+      const response = await axiosInstance.delete(`/task/delete/${id}`)
+      console.log(response.data.message);
       setTasks((prev) => prev.filter((task) => task._id !== id));
     } catch (error) {
       console.error("Error in deleting task:", error.response.data);
     }
   }
 
-  const handleLogout = () => {
-    handleSuccess("Logged out successfully!");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("email");
-    localStorage.removeItem("name");
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
+      handleSuccess("Logged out successfully!");
+      localStorage.clear();
+    } catch (error) {
+      console.error("Error in logging out:", error);
+    }
     setTimeout(() => {
       navigate("/login");
     }, 1500);
@@ -66,13 +65,21 @@ export function ShowTasks() {
   return (
     <>
       <div className="container-showtasks">
-        <h2>Tasks</h2>
-        <TaskBody
-          handleChange={handleChange}
-          handleDelete={handleDelete}
-          tasks={tasks}
-          setTasks={setTasks}
-        />
+        {tasks.length === 0 ? (
+          <h2 className="no-tasks">
+            No tasks available. Please add some tasks.
+          </h2>
+        ) : (
+          <>
+            <h2>Tasks</h2>
+            <TaskBody
+              handleChange={handleChange}
+              handleDelete={handleDelete}
+              tasks={tasks}
+              setTasks={setTasks}
+            />
+          </>
+        )}
         {showInput && (
           <AddTask
             onTaskAdded={(newTask) => {

@@ -1,39 +1,47 @@
 import axios from "axios";
+import { startLoading, stopLoading } from "../utils/loader.js";
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8080",
   headers: {
     "Content-Type": "application/json"
-  }
+  },
+  withCredentials: true,
 });
 
 let isRefreshing = false;
 let failedQueue = [];
 
-const processQueue = (error, token = null) => {
+const processQueue = (error) => {
   failedQueue.forEach((prom) => {
     if (error) {
-      prom.reject(error); // reject all waiting requests
+      prom.reject(error);
     } else {
-      prom.resolve(token); // retry with new token
+      prom.resolve();
     }
   });
-
-  failedQueue = []; // clear queue after processing
+  failedQueue = [];
 };
 
-axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+axiosInstance.interceptors.request.use(
+  (config) => {
+    startLoading();
+    return config;
+  },
+  (error) => {
+    stopLoading();
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    stopLoading();
+    return response;
+  },
 
   async (error) => {
+    stopLoading();
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
@@ -41,40 +49,26 @@ axiosInstance.interceptors.response.use(
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        })
-        .then((token) => {
-          originalRequest.headers.Authorization = `Bearer ${token}`;
-          return axiosInstance(originalRequest);
-        })
-        .catch((err) => {
-          return Promise.reject(err);
-        });
+        }).then(() => axiosInstance(originalRequest));
       }
 
       originalRequest._retry = true;
       isRefreshing = true;
 
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
-
-        const res = await axios.post(
+        await axios.post(
           "http://localhost:8080/auth/refresh",
-          { refreshToken }
+          {},
+          { withCredentials: true }
         );
 
-        const newAccessToken = res.data.accessToken;
+        processQueue(null);
 
-        localStorage.setItem("accessToken", newAccessToken);
-
-        processQueue(null, newAccessToken);
-
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return axiosInstance(originalRequest);
 
       } catch (refreshError) {
-        processQueue(refreshError, null);
+        processQueue(refreshError);
 
-        localStorage.clear();
         window.location.href = "/login";
 
         return Promise.reject(refreshError);

@@ -57,25 +57,35 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
-  transition: 0.2s;
-}
-
-.btn:hover {
-  transform: scale(1.05);
 }
 
 /* COLORS */
 .edit-btn {
   background: #3b82f6;
   color: white;
+  transition: background 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: #1759e7;
 }
 
 .save-btn {
   background: #3b82f6;
   color: white;
+  transition: background 0.2s ease;
+}
+
+.save-btn:hover {
+  background: #1759e7;
 }
 
 .delete-btn {
   background: #ef4444;
   color: white;
+  transition: background 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: #e11b1b;
 }

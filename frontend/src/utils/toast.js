@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 export const handleSuccess = (message) => {
   toast.success(message, {
     position: "top-center",
-    autoClose: 3000,
+    autoClose: 2000,
     style: {
       padding: "16px",
       borderRadius: "10px",
@@ -15,7 +15,7 @@ export const handleSuccess = (message) => {
 export const handleError = (message) => {
   toast.error(message, {
     position: "top-center",
-    autoClose: 3000,
+    autoClose: 2000,
     style: {
       padding: "16px",
       borderRadius: "10px",

@@ -24,13 +24,12 @@ export function Login() {
     e.preventDefault();
     try {
       const response = await axiosInstance.post("/auth/login", formData,{
-        skipAuthInterceptor: true
+        skipAuthInterceptor: true,
+        withCredentials: true
       });
-      const { success, message, accessToken, refreshToken, email, name } = response.data;
+      const { success, message, email, name } = response.data;
       if (success) {
         handleSuccess(message);
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
         localStorage.setItem("email", email);
         localStorage.setItem("name", name);
         setTimeout(() => {
