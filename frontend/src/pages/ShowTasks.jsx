@@ -3,68 +3,39 @@ import { useState, useEffect } from "react";
 import { TaskBody } from "./TaskBody.jsx";
 import { AddTask } from "./AddTask.jsx";
 import "./ShowTasks.css";
-import { handleSuccess } from "../utils/toast.js";
-import { useNavigate } from "react-router-dom";
 
 export function ShowTasks() {
-  const navigate = useNavigate();
+
   const [tasks, setTasks] = useState([]);
   const [showInput, setShowInput] = useState(false);
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await axiosInstance.get("/task");
-        setTasks(response.data.tasks);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-      }
-    };
-    fetchTasks();
-  }, []);
+  const [priority, setPriority] = useState("");
+  const [status, setStatus] = useState("");
 
-  const handleChange = async (id) => {
+  const fetchTasks = async () => {
     try {
-      const response = await axiosInstance.put(`/task/complete/${id}`)
-      console.log(response.data.message);
-      setTasks((prev) =>
-        prev.map((task) =>
-          task._id === id
-            ? { ...task, completed: !task.completed }
-            : task
-        )
-      );
-    } catch (error) {
-      console.error("Error in updating task:", error.response);
-    }
-  }
+      let url = "/task?";
 
-  const handleDelete = async (id) => {
-    try {
-      const response = await axiosInstance.delete(`/task/delete/${id}`)
-      console.log(response.data.message);
-      setTasks((prev) => prev.filter((task) => task._id !== id));
-    } catch (error) {
-      console.error("Error in deleting task:", error.response.data);
-    }
-  }
+      if (priority) url += `priority=${priority}&`;
+      if (status) url += `status=${status}`;
 
-  const handleLogout = async () => {
-    try {
-      await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
-      handleSuccess("Logged out successfully!");
-      localStorage.clear();
+      const response = await axiosInstance.get(url);
+      setTasks(response.data.tasks);
     } catch (error) {
-      console.error("Error in logging out:", error);
+      console.error("Error fetching tasks:", error);
     }
-    setTimeout(() => {
-      navigate("/login");
-    }, 1500);
   };
+
+  // 🔁 RUN WHEN FILTER CHANGES
+  useEffect(() => {
+    fetchTasks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [priority, status]);
 
   return (
     <>
       <div className="container-showtasks">
+
         {tasks.length === 0 ? (
           <h2 className="no-tasks">
             No tasks available. Please add some tasks.
@@ -72,14 +43,33 @@ export function ShowTasks() {
         ) : (
           <>
             <h2>Tasks</h2>
-            <TaskBody
-              handleChange={handleChange}
-              handleDelete={handleDelete}
-              tasks={tasks}
-              setTasks={setTasks}
-            />
+            <div className="filters">
+              <select onChange={(e) => setPriority(e.target.value)}>
+                <option value="">All Priorities</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+
+              <select onChange={(e) => setStatus(e.target.value)}>
+                <option value="">All Status</option>
+                <option value="completed">Completed ✅</option>
+                <option value="pending">Pending ⏳</option>
+              </select>
+              <button
+                className="reset-btn"
+                onClick={() => {
+                  setPriority("");
+                  setStatus("");
+                }}>
+                Reset Filters
+              </button>
+            </div>
+
+            <TaskBody tasks={tasks} setTasks={setTasks} />
           </>
         )}
+
         {showInput && (
           <AddTask
             onTaskAdded={(newTask) => {
@@ -88,18 +78,14 @@ export function ShowTasks() {
             }}
           />
         )}
+
         <button
           className="add-btn"
-          onClick={() => setShowInput((prev) => !prev)}>
+          onClick={() => setShowInput((prev) => !prev)}
+        >
           {showInput ? "Cancel" : "Add Task"}
         </button>
       </div>
-      <div className="logout">
-        <button className="btn-logout" onClick={handleLogout}>
-          Logout
-        </button>
-      </div>
     </>
-
   );
 }

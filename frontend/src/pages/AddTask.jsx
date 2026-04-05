@@ -4,11 +4,12 @@ import "./AddTask.css";
 
 export function AddTask({ onTaskAdded }) {
   const [title, setTitle] = useState("");
+  const [priority, setPriority] = useState("Medium");
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     try {
-      const response = await axiosInstance.post("/task/add", { title });
+      const response = await axiosInstance.post("/task/add", { title, priority });
       console.log("Task added:", response.data);
       onTaskAdded(response.data.task);
       setTitle("");
@@ -23,6 +24,11 @@ export function AddTask({ onTaskAdded }) {
         placeholder="Task title" 
         value={title} 
         onChange={(e) => setTitle(e.target.value)} />
+        <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
         <button type="submit">Add Task</button>
       </form>
   );

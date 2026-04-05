@@ -2,9 +2,34 @@ import { useState } from "react";
 import axiosInstance from "../apis/axiosInstance.js";
 import "./TaskBody.css";
 
-export function TaskBody({ handleChange, handleDelete, tasks, setTasks }) {
+export function TaskBody({ tasks, setTasks }) {
   const [editId, setEditId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
+  const handleChange = async (id) => {
+    try {
+      const response = await axiosInstance.put(`/task/complete/${id}`)
+      console.log(response.data.message);
+      setTasks((prev) =>
+        prev.map((task) =>
+          task._id === id
+            ? { ...task, completed: !task.completed }
+            : task
+        )
+      );
+    } catch (error) {
+      console.error("Error in updating task:", error.response);
+    }
+  }
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await axiosInstance.delete(`/task/delete/${id}`)
+      console.log(response.data.message);
+      setTasks((prev) => prev.filter((task) => task._id !== id));
+    } catch (error) {
+      console.error("Error in deleting task:", error.response.data);
+    }
+  }
 
   return (
     <div className="task-list">
@@ -28,12 +53,17 @@ export function TaskBody({ handleChange, handleDelete, tasks, setTasks }) {
                 onChange={(e) => setEditTitle(e.target.value)}
               />
             ) : (
-              <span className={task.completed ? "completed" : ""}>
-                {task.title}
-              </span>
+              <>
+                <span className={task.completed ? "completed" : ""}>
+                  {task.title}
+                </span>
+
+                {task.priority && (
+                  <span className={`priority ${task.priority}`}>{task.priority}</span>
+                )}
+              </>
             )}
           </div>
-
           {/* RIGHT SIDE */}
           <div className="task-actions">
             {editId === task._id ? (

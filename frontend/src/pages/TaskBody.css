@@ -89,3 +89,25 @@
 .delete-btn:hover {
   background: #e11b1b;
 }
+
+.priority {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+.priority.High {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.priority.Medium {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.priority.Low {
+  background: #dcfce7;
+  color: #166534;
+}

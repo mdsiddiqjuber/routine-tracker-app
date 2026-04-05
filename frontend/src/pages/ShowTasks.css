@@ -45,3 +45,62 @@ h2 {
   border-radius: 6px;
   cursor: pointer;
 } 
+
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.filters select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.reset-btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: transparent;
+}
+
+/* LIGHT MODE (default) */
+body.light {
+  background-color: #f5f5f5;
+  color: #222;
+}
+
+/* DARK MODE */
+body.dark {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+/* Container */
+body.dark .container-showtasks {
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+}
+
+/* Buttons */
+body.dark button {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+/* Inputs / selects */
+body.dark select,
+body.dark input {
+  background-color: #2a2a2a;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+/* Task cards (if you have them) */
+body.dark .task {
+  background-color: #2a2a2a;
+}
