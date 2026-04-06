@@ -48,7 +48,6 @@
 
 /* BOTTOM MENU */
 .bottom-menu {
-  
   display: flex;
   flex-direction: column;
   gap: 10px;
