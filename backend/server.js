@@ -11,7 +11,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({
-  origin: "*",
+  origin: "https://routine-tracker-app-bice.vercel.app",
   credentials: true,
 }));
 app.use(cookieParser());
